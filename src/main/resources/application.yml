@@ -1,0 +1,31 @@
+
+server:
+  port: 9988
+spring:
+  datasource:
+    #Mysql Setting
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://47.102.122.8:3306/housemouse?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: abc*123
+    validationQuery: select 1
+
+    # Common Setting
+    initialSize: 20
+    maxActive: 150
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 100
+
+mybatis-plus:
+  # 此处有坑 单模块加载也需要配置*(classpath 紧挨着的星) 解决自定义SQL无法执行
+  mapper-locations: classpath*:mybatis/mapper/*/*Mapper.xml
+
+WebConfig:
+  damaiwang:
+    index: https://api-gw.damai.cn//search.html
+    search: https://search.damai.cn/searchajax.html
+    ticket: https://detail.damai.cn/subpage
+

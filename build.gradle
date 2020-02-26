@@ -1,0 +1,41 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id 'java'
+}
+
+group = 'com.base'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    compileOnly 'org.projectlombok:lombok'
+    compile group: 'com.google.guava', name: 'guava', version: '26.0-jre'
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.59'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '4.3.25.RELEASE'
+    compile ("mysql:mysql-connector-java:5.1.24")
+    compile group: 'com.alibaba', name: 'druid', version: '1.1.16'
+    compile group: 'org.mybatis', name: 'mybatis', version: '3.4.6'
+    compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '2.2.0'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.5'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
