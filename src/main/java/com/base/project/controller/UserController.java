@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @RestController
 @RequestMapping("/user")
-public class UserConteroller {
+public class UserController {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
 
     @RequestMapping("/login")
