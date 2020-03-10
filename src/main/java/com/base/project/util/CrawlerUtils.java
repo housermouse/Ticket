@@ -70,6 +70,8 @@ public class CrawlerUtils {
         String sb = CrawlerUtils.paramToString(parms);
         // 创建Get请求
         HttpGet httpGet = new HttpGet(url + "?" + sb);
+
+        httpGet.addHeader("referer","https://www.damai.cn/");
         // 响应模型
         CloseableHttpResponse response = null;
         try {

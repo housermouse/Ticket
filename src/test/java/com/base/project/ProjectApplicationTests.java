@@ -75,4 +75,26 @@ class ProjectApplicationTests {
         System.out.println(respJson);
     }
 
+    @Test
+    void TestIndex() {
+
+        String dmwIndex = "https://api-gw.damai.cn//search.html";
+        JSONObject respJson = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        JSONObject params = new JSONObject();
+        params.put("cat","1");
+        params.put("destCity","全国");
+        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        params.put("cat","3");
+        params.put("destCity","全国");
+        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        params.put("cat","6");
+        params.put("destCity","全国");
+        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        params.put("cat","100");
+        params.put("destCity","全国");
+        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        respJson.put("initDataArr",jsonArray);
+        System.out.println(jsonArray);
+    }
 }
