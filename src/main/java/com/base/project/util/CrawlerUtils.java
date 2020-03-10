@@ -4,6 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,20 +27,20 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 public class CrawlerUtils {
-    public static String paramToString(JSONObject parms){
+    public static String paramToString(JSONObject parms) {
         StringBuilder sb = new StringBuilder();
         Iterator iter = parms.entrySet().iterator();
         while (iter.hasNext()) {
             JSONObject.Entry entry = (JSONObject.Entry) iter.next();
             sb.append(entry.getKey());
             sb.append("=");
-            sb.append(entry.getValue()!=null?entry.getValue():"");
+            sb.append(entry.getValue() != null ? entry.getValue() : "");
             sb.append("&");
         }
-        return  sb.toString();
+        return sb.toString();
     }
 
-    public static ArrayList<Ticket> ticketForDmwSeachData(JSONObject Json){
+    public static ArrayList<Ticket> ticketForDmwSeachData(JSONObject Json) {
         try {
             ArrayList<Ticket> tickInfos = new ArrayList<Ticket>();
             JSONObject perform = Json.getJSONObject("perform");
@@ -48,20 +49,20 @@ public class CrawlerUtils {
                 JSONObject obj = (JSONObject) o;
                 Ticket ticket = new Ticket();
                 ticket.setNumber(obj.getString("mq"));
-                for(int i=0 ;i<obj.getIntValue("mq");i++){
+                for (int i = 0; i < obj.getIntValue("mq"); i++) {
                     ticket.getPrices().add(obj.getString("dashPrice"));
                 }
                 ticket.setPriceName(obj.getString("priceName"));
-                tickInfos.add( ticket);
+                tickInfos.add(ticket);
             }
             return tickInfos;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<Ticket>();
         }
     }
 
-    public static JSONObject getDataforUrl(String url ,JSONObject parms){
+    public static JSONObject getDataforUrl(String url, JSONObject parms) {
         JSONObject jsonObject = new JSONObject();
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -98,8 +99,8 @@ public class CrawlerUtils {
                 String result = EntityUtils.toString(responseEntity);
                 int begin = result.indexOf("{");
                 int end = result.lastIndexOf("}");
-                if(begin !=-1 && end !=-1){
-                    result=result.substring(begin,end+1);
+                if (begin != -1 && end != -1) {
+                    result = result.substring(begin, end + 1);
                     jsonObject.putAll(JSONObject.parseObject(result));
                 }
 
@@ -128,10 +129,10 @@ public class CrawlerUtils {
         return jsonObject;
     }
 
-    static public ArrayList<Ticket> getArrForMTLData(String uri ,JSONObject param){
+    static public ArrayList<Ticket> getArrForMTLData(String uri, JSONObject param) {
         ArrayList<Ticket> TicketArr = new ArrayList<Ticket>();
-        try{
-            JSONObject result= CrawlerUtils.getDataforUrl(uri,param);
+        try {
+            JSONObject result = CrawlerUtils.getDataforUrl(uri, param);
             JSONArray data = result.getJSONObject("result").getJSONArray("data");
 
             for (Object datum : data) {
@@ -141,25 +142,24 @@ public class CrawlerUtils {
                     JSONArray tickets = obj.getJSONArray("tickets");
                     Ticket ticket = new Ticket();
 
-                    ticket.setPriceName(obj.getString("comments")+obj.getString("originalPrice")+"元");
-                    ticket.setNumber(tickets.size()+"");
-                    tickets.forEach(item->{
-                        ticket.getPrices().add(((JSONObject)item).getString("price"));
+                    ticket.setPriceName(obj.getString("comments") + obj.getString("originalPrice") + "元");
+                    ticket.setNumber(tickets.size() + "");
+                    tickets.forEach(item -> {
+                        ticket.getPrices().add(((JSONObject) item).getString("price"));
                     });
                     TicketArr.add(ticket);
 
                 }
             }
 
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            return  new ArrayList<Ticket>();
+            return new ArrayList<Ticket>();
         }
 
 
         return TicketArr;
     }
-
 
 
 }

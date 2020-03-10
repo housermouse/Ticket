@@ -13,6 +13,6 @@ public class Performance {
     String address;
     String ticketValue;
     String picPath;
-    ArrayList<Ticket> tickets;
+    List<Ticket> tickets;
 
 }

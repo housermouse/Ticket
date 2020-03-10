@@ -7,14 +7,14 @@ import com.base.project.util.JsonBackUtil;
 import com.base.project.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author ASUS
+ */
 @Component
 @RestController
 @RequestMapping("/user")
@@ -31,7 +31,7 @@ public class UserConteroller {
         user.setPassWords(request.getParameter("passWords"));
         User result = userService.CheckLogin(user);
         JSONObject Response = new JSONObject();
-        Response.put("user",user);
+        Response.put("user",result);
         if(result!=null){
           SessionUtils.setUser(request,user);
           return JsonBackUtil.success(Response);
@@ -53,13 +53,21 @@ public class UserConteroller {
         return JsonBackUtil.success(new JSONObject());
     }
 
-    @RequestMapping("/register")
+    @PostMapping("/register")
     public JSONObject UserRegister(HttpServletRequest request, HttpServletResponse response) {
-        User user = new User();
-        user.setPassWords(request.getParameter("passWords"));
-        user.setPickName(request.getParameter("pickName"));
-        user.setUserName(request.getParameter("userName"));
         JSONObject jsonObject = new JSONObject();
+        User user = new User();
+        String passWords = request.getParameter("passWords");
+        String nickName = request.getParameter("nickName");
+        String userName = request.getParameter("userName");
+        if(StringUtils.isBlank(passWords)||StringUtils.isBlank(nickName)||StringUtils.isBlank(userName)){
+            jsonObject.put("reamrk","参数传入不正确");
+            return JsonBackUtil.fail(jsonObject);
+        }
+        user.setNickName(nickName);
+        user.setPassWords(passWords);
+        user.setUserName(userName);
+
         user = userService.UserRegister(user);
        if(user!=null){ //插入成功返回true 失败返回false 根据返回值跳页面
            jsonObject.put("user",user);

@@ -31,56 +31,56 @@ public class PerformanceService {
     @Value("WebConfig.damaiwang.ticket")
     String ticketUri4DMW;
 
-    public JSONArray getArrForDMW(JSONObject jsonObject){
+    public JSONArray getArrForDMW(JSONObject jsonObject) {
         JSONArray dataArr = jsonObject.getJSONObject("pageData").getJSONArray("resultData");
         JSONArray newData = new JSONArray();
-        if(null!=dataArr){
-            dataArr.forEach(item->{
-                JSONObject obj = (JSONObject)item;
+        if (null != dataArr&&dataArr.size()!=0) {
+            dataArr.forEach(item -> {
+                JSONObject obj = (JSONObject) item;
                 Performance performance = new Performance();
                 performance.setAddress(obj.getString("venue"));
                 performance.setName(obj.getString("nameNoHtml"));
                 performance.setPerformTime(obj.getString("showtime"));
                 performance.setPicPath(obj.getString("verticalPic"));
                 performance.setTicketValue(obj.getString("price"));
-                performance.setTickets( getIicketInfo4DMW(obj.getString("projectid")));
+                performance.setTickets(getIicketInfo4DMW(obj.getString("projectid")));
                 newData.add(performance);
             });
         }
         return newData;
     }
 
-    public JSONObject getJSONData(JSONArray dataArr,String webName,String keyWorld){
+    public JSONObject getJSONData(JSONArray dataArr, String webName, String keyWorld) {
         JSONObject data = new JSONObject();
-        data.put("webName",webName);
-        data.put("keyWorld",keyWorld);
-        data.put("data",dataArr);
-        return  data;
+        data.put("webName", webName);
+        data.put("keyWorld", keyWorld);
+        data.put("data", dataArr);
+        return data;
     }
 
-    public ArrayList<Ticket> getIicketInfo4DMW(String id){
+    public ArrayList<Ticket> getIicketInfo4DMW(String id) {
 
-       try {
-           JSONObject jsonObject = new JSONObject();
-           jsonObject.put("itemId",id);
-           jsonObject.put("apiVersion","2.0");
-           jsonObject.put("dmChannel","pc@damai_pc");
-           jsonObject.put("bizCode","ali.china.damai");
-           jsonObject.put("scenario","itemsku");
-           JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage",jsonObject);
-           return  CrawlerUtils.ticketForDmwSeachData(data);
-       }catch (Exception e){
-           e.printStackTrace();
-           return new ArrayList<Ticket>();
-       }
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("itemId", id);
+            jsonObject.put("apiVersion", "2.0");
+            jsonObject.put("dmChannel", "pc@damai_pc");
+            jsonObject.put("bizCode", "ali.china.damai");
+            jsonObject.put("scenario", "itemsku");
+            JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage", jsonObject);
+            return CrawlerUtils.ticketForDmwSeachData(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<Ticket>();
+        }
     }
 
-    public JSONArray getPerformInfoForMTL(String keyWorld){
-        String URL = "https://www.moretickets.com/search/"+ keyWorld;
+    public JSONArray getPerformInfoForMTL(String keyWorld) {
+        String URL = "https://www.moretickets.com/search/" + keyWorld;
         JSONArray result = new JSONArray();
         try {
             Document doc = Jsoup.connect(URL).get();
-            Elements elements= doc.getElementsByClass("show-items");
+            Elements elements = doc.getElementsByClass("show-items");
             for (Element element : elements) {
                 Performance performance = new Performance();
                 performance.setTickets(getTicketInfoForMTL(element.attr("data-sashowoid")));
@@ -92,22 +92,22 @@ public class PerformanceService {
                 result.add(performance);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new JSONArray();
         }
 
 
-        return  result;
+        return result;
     }
 
 
-    public ArrayList<Ticket> getTicketInfoForMTL(String sessionId){
+    public ArrayList<Ticket> getTicketInfoForMTL(String sessionId) {
 
         JSONObject jsonObject = new JSONObject();
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         ArrayList<Ticket> resultJson = new ArrayList<Ticket>();
-        String uri = "https://www.moretickets.com/showapi/pub/v1_2/show/"+sessionId+"/sessionone";
+        String uri = "https://www.moretickets.com/showapi/pub/v1_2/show/" + sessionId + "/sessionone";
         // 创建Get请求
         HttpGet httpGet = new HttpGet(uri);
         // 响应模型
@@ -139,16 +139,16 @@ public class PerformanceService {
                 String result = EntityUtils.toString(responseEntity);
                 int begin = result.indexOf("{");
                 int end = result.lastIndexOf("}");
-                if(begin !=-1 && end !=-1){
-                    result=result.substring(begin,end+1);
+                if (begin != -1 && end != -1) {
+                    result = result.substring(begin, end + 1);
                     jsonObject.putAll(JSONObject.parseObject(result));
                     JSONObject resultData = jsonObject.getJSONObject("result");
                     JSONArray data = resultData.getJSONArray("data");
-                    for(Object o :data){
-                        String cityId = ((JSONObject)o).getString("cityOID");
+                    for (Object o : data) {
+                        String cityId = ((JSONObject) o).getString("cityOID");
                         JSONObject param = new JSONObject();
-                        param.put("locationCityOID",cityId);
-                        resultJson =CrawlerUtils.getArrForMTLData(uri,param);
+                        param.put("locationCityOID", cityId);
+                        resultJson = CrawlerUtils.getArrForMTLData(uri, param);
 
                     }
                 }
@@ -160,10 +160,10 @@ public class PerformanceService {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
             return null;
-        }finally {
+        } finally {
             try {
                 // 释放资源
                 if (httpClient != null) {

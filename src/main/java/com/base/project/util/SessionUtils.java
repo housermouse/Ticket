@@ -1,8 +1,6 @@
 package com.base.project.util;
 
 
-
-
 import com.base.project.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,18 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * Session 工具类
- *
  */
 public final class SessionUtils {
 
 
     private static final String SESSION_USER = "session_user";
     private static final int MAX_TIME = 1800; //半小时
-
-
-
 
 
     /**

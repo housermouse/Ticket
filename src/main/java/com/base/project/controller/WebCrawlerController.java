@@ -34,7 +34,7 @@ public class WebCrawlerController {
     PerformanceService performanceService;
 
     //首页初始化数据使用大麦网首页数据初始化
-    @RequestMapping("index")
+    @RequestMapping("/index")
     public JSONObject index(HttpServletRequest request, HttpServletResponse response){
         JSONObject respJson = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -55,7 +55,7 @@ public class WebCrawlerController {
         return JsonBackUtil.success(respJson);
     }
 
-    @RequestMapping("search")
+    @RequestMapping("/search")
     public JSONObject search(HttpServletRequest request, HttpServletResponse response){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();

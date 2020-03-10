@@ -18,13 +18,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 class ProjectApplicationTests {
 
     @Autowired
@@ -35,44 +38,41 @@ class ProjectApplicationTests {
     @Test
     void contextLoads() {
         PerformanceService performanceService = new PerformanceService();
-       System.out.println( performanceService.getPerformInfoForMTL("杨千嬅"));
+        System.out.println(performanceService.getPerformInfoForMTL("杨千嬅"));
     }
 
 
-
-
     @Test
-    void DMDataForToClass(){
+    void DMDataForToClass() {
         PerformanceService performanceService = new PerformanceService();
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("keyword","林俊杰");
-        JSONObject data = CrawlerUtils.getDataforUrl("https://search.damai.cn/searchajax.html",jsonObject);
-        System.out.println(performanceService.getArrForDMW(data));
-
+        jsonObject.put("keyword", "林俊杰");
+        JSONObject data = CrawlerUtils.getDataforUrl("https://search.damai.cn/searchajax.html", jsonObject);
+        JSONArray result = performanceService.getArrForDMW(data);
     }
 
     @Test
-    void getTicketInfo(){
+    void getTicketInfo() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("itemId","609379635985");
-        jsonObject.put("apiVersion","2.0");
-        jsonObject.put("dmChannel","pc@damai_pc");
-        jsonObject.put("bizCode","ali.china.damai");
-        jsonObject.put("scenario","itemsku");
+        jsonObject.put("itemId", "609379635985");
+        jsonObject.put("apiVersion", "2.0");
+        jsonObject.put("dmChannel", "pc@damai_pc");
+        jsonObject.put("bizCode", "ali.china.damai");
+        jsonObject.put("scenario", "itemsku");
 
-        JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage",jsonObject);
-        System.out.println( CrawlerUtils.ticketForDmwSeachData(data));
+        JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage", jsonObject);
+        System.out.println(CrawlerUtils.ticketForDmwSeachData(data));
     }
 
     @Test
-    void getInfoForDMW(){
+    void getInfoForDMW() {
         PerformanceService performanceService = new PerformanceService();
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-        params.put("keyword","杨千嬅");
-        JSONArray dmwJsonArr = performanceService.getArrForDMW(CrawlerUtils.getDataforUrl("https://search.damai.cn/searchajax.html",params));
-        respJson.put("searchData",performanceService.getJSONData(dmwJsonArr,"大麦网","DMW"));
-        System.out.println( respJson);
+        params.put("keyword", "杨千嬅");
+        JSONArray dmwJsonArr = performanceService.getArrForDMW(CrawlerUtils.getDataforUrl("https://search.damai.cn/searchajax.html", params));
+        respJson.put("searchData", performanceService.getJSONData(dmwJsonArr, "大麦网", "DMW"));
+        System.out.println(respJson);
     }
 
 }
