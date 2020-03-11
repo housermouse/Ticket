@@ -8,6 +8,7 @@ import com.base.project.service.UserService;
 import com.base.project.util.CrawlerUtils;
 import com.base.project.util.JsonBackUtil;
 import com.base.project.util.SessionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -59,18 +60,18 @@ public class WebCrawlerController {
     public JSONObject search(HttpServletRequest request, HttpServletResponse response){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-
-        String keyWorld = (String) request.getAttribute("keyWorld");
-        params.put("keyword",keyWorld);
-        JSONArray dmwJsonArr = performanceService.getArrForDMW(CrawlerUtils.getDataforUrl(dmwSearch,params));
+        String keyword = (String) request.getAttribute("keyword");
+        params.put("keyword",keyword);
         JSONArray searchData = new JSONArray();
-        searchData.add(performanceService.getJSONData(dmwJsonArr,"大麦网","DMW"));
-        searchData.add(performanceService.getJSONData(performanceService.getPerformInfoForMTL(keyWorld),"摩天轮","MTL"));
-
-
+        if(StringUtils.isBlank(keyword)){
+            searchData.add(performanceService.getJSONData(new JSONArray(),"大麦网","DMW"));
+            searchData.add(performanceService.getJSONData(new JSONArray(),"摩天轮","MTL"));
+        }else {
+            JSONArray dmwJsonArr = performanceService.getArrForDMW(CrawlerUtils.getDataforUrl(dmwSearch,params));
+            searchData.add(performanceService.getJSONData(dmwJsonArr,"大麦网","DMW"));
+            searchData.add(performanceService.getJSONData(performanceService.getPerformInfoForMTL(keyword),"摩天轮","MTL"));
+        }
         respJson.put("searchData",searchData);
-
-
         return JsonBackUtil.success(respJson);
     }
 
