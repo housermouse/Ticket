@@ -70,7 +70,6 @@ public class PerformanceService {
             JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage", jsonObject);
             return CrawlerUtils.ticketForDmwSeachData(data);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ArrayList<Ticket>();
         }
     }
@@ -93,7 +92,6 @@ public class PerformanceService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             return new JSONArray();
         }
 

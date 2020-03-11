@@ -57,7 +57,6 @@ public class CrawlerUtils {
             }
             return tickInfos;
         } catch (Exception e) {
-            e.printStackTrace();
             return new ArrayList<Ticket>();
         }
     }
@@ -146,9 +145,13 @@ public class CrawlerUtils {
 
                     ticket.setPriceName(obj.getString("comments") + obj.getString("originalPrice") + "元");
                     ticket.setNumber(tickets.size() + "");
-                    tickets.forEach(item -> {
-                        ticket.getPrices().add(((JSONObject) item).getString("price"));
-                    });
+                  try {
+                      tickets.forEach(item -> {
+                          ticket.getPrices().add(((JSONObject) item).getString("price"));
+                      });
+                  }catch (Exception e){
+
+                  }
                     TicketArr.add(ticket);
 
                 }
