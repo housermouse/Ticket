@@ -12,10 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,10 +54,9 @@ public class WebCrawlerController {
     }
 
     @RequestMapping("/search")
-    public JSONObject search(HttpServletRequest request, HttpServletResponse response){
+    public JSONObject search(@RequestParam String keyword){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-        String keyword = (String) request.getAttribute("keyword");
         params.put("keyword",keyword);
         JSONArray searchData = new JSONArray();
         if(StringUtils.isBlank(keyword)){

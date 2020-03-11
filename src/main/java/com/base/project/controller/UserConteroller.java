@@ -27,10 +27,17 @@ public class UserConteroller {
     @RequestMapping("/login")
     public JSONObject userLogin(HttpServletRequest request, HttpServletResponse response) {
         User user = new User();
-        user.setUserName(request.getParameter("userName"));
-        user.setPassWords(request.getParameter("passWords"));
-        User result = userService.CheckLogin(user);
         JSONObject Response = new JSONObject();
+        String passWords = request.getParameter("passWords");
+        String userName = request.getParameter("userName");
+        if(StringUtils.isBlank(passWords)||StringUtils.isBlank(userName)){
+            Response.put("reamrk","参数传入不正确");
+            return JsonBackUtil.fail(Response);
+        }
+        user.setUserName(userName);
+        user.setPassWords(passWords);
+        User result = userService.CheckLogin(user);
+
         Response.put("user",result);
         if(result!=null){
           SessionUtils.setUser(request,user);
@@ -53,7 +60,7 @@ public class UserConteroller {
         return JsonBackUtil.success(new JSONObject());
     }
 
-    @PostMapping("/register")
+    @RequestMapping("/register")
     public JSONObject UserRegister(HttpServletRequest request, HttpServletResponse response) {
         JSONObject jsonObject = new JSONObject();
         User user = new User();
