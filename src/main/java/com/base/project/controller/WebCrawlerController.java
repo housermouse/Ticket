@@ -29,6 +29,8 @@ public class WebCrawlerController {
     private String dmwSearch;
     @Value("${WebConfig.damaiwang.SearchList}")
     private String SearchList;
+    @Value("${WebConfig.damaiwang.SearchLikeList}")
+    private String SearchLikeList;
 
     @Autowired
     PerformanceService performanceService;
@@ -108,4 +110,39 @@ public class WebCrawlerController {
         jsonObject.put("hotSearch",performanceService.getHotSinger());
         return JsonBackUtil.success(jsonObject);
     }
+
+
+    @RequestMapping("getLikeList")
+    public JSONObject getLikeList(@RequestParam String keyword){
+        JSONObject jsonObject = new JSONObject();
+        String keyWorld = StringUtils.isBlank(keyword)?"":keyword;
+        JSONObject params = new JSONObject();
+        params.put("keyword",keyWorld);
+        String  ids = CrawlerUtils.getDataforUrl(dmwSearch,params).getString("ids");
+        params.put("projects",ids);
+        JSONObject getData= CrawlerUtils.getDataforUrl(SearchLikeList,params);
+        System.out.println(getData);
+        JSONArray tempArray = getData.getJSONArray("suggest");
+        JSONArray resultArray = new JSONArray();
+        for(int i=0;i<tempArray.size();i++){
+            JSONObject obj = tempArray.getJSONObject(i);
+            JSONObject resultJson = new JSONObject();
+            resultJson.put("type","ych");
+            resultJson.put("img",obj.getString("verticalPic"));
+            resultJson.put("name",obj.getString("projectName"));
+            resultJson.put("address",obj.getString("venue"));
+            resultJson.put("date",obj.getString("showTime"));
+            resultJson.put("price",obj.getString("price"));
+            resultJson.put("id",obj.getString("projectId"));
+            resultArray.add(resultJson);
+        }
+        jsonObject.put("likeList",resultArray);
+        return JsonBackUtil.success(jsonObject);
+    }
+
+
+
+
+
+
 }

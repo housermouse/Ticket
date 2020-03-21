@@ -62,6 +62,14 @@ public class PerformanceService {
     public ArrayList<Ticket> getIicketInfo4DMW(String id) {
 
         try {
+            JSONObject data =getPerformeInfo4DMW(id);
+            return CrawlerUtils.ticketForDmwSeachData(data);
+        } catch (Exception e) {
+            return new ArrayList<Ticket>();
+        }
+    }
+    public JSONObject getPerformeInfo4DMW(String id) {
+        try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("itemId", id);
             jsonObject.put("apiVersion", "2.0");
@@ -69,11 +77,12 @@ public class PerformanceService {
             jsonObject.put("bizCode", "ali.china.damai");
             jsonObject.put("scenario", "itemsku");
             JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage", jsonObject);
-            return CrawlerUtils.ticketForDmwSeachData(data);
+            return data;
         } catch (Exception e) {
-            return new ArrayList<Ticket>();
+            return new JSONObject();
         }
     }
+
 
     public JSONArray getPerformInfoForMTL(String keyWorld) {
         String URL = "https://www.moretickets.com/search/" + keyWorld;
