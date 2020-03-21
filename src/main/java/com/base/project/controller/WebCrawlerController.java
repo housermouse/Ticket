@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.Element;
 
 @Component
 @RestController
@@ -74,6 +75,32 @@ public class WebCrawlerController {
             searchData.add(performanceService.getJSONData(performanceService.getPerformInfoForMTL(keyword),"摩天轮","MTL"));
         }
         respJson.put("searchData",searchData);
+        return JsonBackUtil.success(respJson);
+    }
+
+    @RequestMapping("/getSearch")
+    public JSONObject getSearch(@RequestParam String keyword){
+        JSONObject respJson = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("keyword",keyword);
+        JSONArray searchData = new JSONArray();
+        JSONArray dmwJsonArr = performanceService.getArrForDmw(CrawlerUtils.getDataforUrl(dmwSearch, params));
+        for (Object e:dmwJsonArr){
+            JSONObject obj = (JSONObject)e;
+            JSONObject result = new JSONObject();
+            result.put("tag",obj.getString("categoryname"));
+            result.put("img",obj.getString("verticalPic"));
+            result.put("title",obj.getString("nameNoHtml"));
+            result.put("singer",obj.getString("actors").replaceAll("<(/?\\S+)\\s*?[^<]*?(/?)>",""));
+            result.put("addr",obj.getString("venue"));
+            result.put("time",obj.getString("showtime"));
+            result.put("price",obj.getString("price"));
+            result.put("sell",obj.getString("showstatus"));
+            result.put("id",obj.getString("projectid"));
+            searchData.add(result);
+
+        }
+        respJson.put("newsList",searchData);
         return JsonBackUtil.success(respJson);
     }
 

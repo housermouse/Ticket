@@ -51,6 +51,20 @@ public class PerformanceService {
         return newData;
     }
 
+
+    public JSONArray getArrForDmw(JSONObject jsonObject) {
+        JSONArray dataArr = jsonObject.getJSONObject("pageData").getJSONArray("resultData");
+        JSONArray newData = new JSONArray();
+        if (null != dataArr&&dataArr.size()!=0) {
+            dataArr.forEach(item -> {
+                JSONObject obj = (JSONObject) item;
+
+                newData.add(obj);
+            });
+        }
+        return newData;
+    }
+
     public JSONObject getJSONData(JSONArray dataArr, String webName, String keyWorld) {
         JSONObject data = new JSONObject();
         data.put("webName", webName);
