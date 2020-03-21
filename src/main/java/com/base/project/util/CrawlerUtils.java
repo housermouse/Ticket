@@ -173,5 +173,26 @@ public class CrawlerUtils {
         return TicketArr;
     }
 
+    public static JSONArray getTIcketInfoForDMW(JSONObject perform,JSONArray jsonArray){
+
+        JSONArray tickArr = perform.getJSONArray("skuList");
+        JSONObject ticketInfo = new JSONObject();
+        for (Object o : tickArr) {
+            JSONObject obj = (JSONObject) o;
+            JSONObject ticket = new JSONObject();
+            JSONArray tempArray = new JSONArray();
+            ticket.put("isNoTicket","0".equals(obj.getString("salableQuantity")));
+            ticket.put("originPrice",obj.getString("dashPrice"));
+            ticket.put("originName","大麦网");
+            ticket.put("originPic","https://img.alicdn.com/tfs/TB1otMASmzqK1RjSZPxXXc4tVXa-167-60.png");
+            ticketInfo.put("priceLevel",ticket.getString("originPrice"));
+            tempArray.add(ticket);
+            ticketInfo.put("origin",tempArray);
+            jsonArray.add(ticketInfo);
+        }
+
+        return jsonArray;
+    }
+
 
 }

@@ -109,10 +109,11 @@ public class PerformanceService {
         return result;
     }
 
-    public JSONObject getData(JSONObject jsonObject){
+    public JSONObject getData(JSONObject jsonObject,String Title){
         JSONObject objects = new JSONObject();
         JSONObject object = new JSONObject();
         JSONArray array = new JSONArray();
+        objects.put("title",Title);
         try {
             JSONArray Array = jsonObject.getJSONArray("data");
             for(int i=0;i<Array.size();i++){
@@ -126,6 +127,7 @@ public class PerformanceService {
                 resultTemp.put("item_id",OBJ.getString("id"));
                 resultTemp.put("item_price",OBJ.getString("formattedPriceStr"));
                 if(i==0){
+
                     object =  resultTemp;
                     continue;
                 }
@@ -237,5 +239,29 @@ public class PerformanceService {
         jsonArray.add("https://img.alicdn.com/tps/i4/TB1Wa0murY1gK0jSZTESutDQVXa.jpg");
         jsonArray.add("https://gw.alicdn.com/tfs/TB1KiMMq7L0gK0jSZFtXXXQCXXa-1200-320.png");
         return jsonArray;
+    }
+
+    public JSONObject getDMWdata(JSONObject jsonObject){
+        JSONObject resultJson = new JSONObject();
+        JSONObject perform = jsonObject.getJSONObject("perform");
+        JSONObject presell = new JSONObject();
+        //预售与时间信息
+        presell.put("time",perform.getString("performName"));
+        presell.put("title",perform.getBoolean("presale")?"预售":"在售");
+        resultJson.put("presell",presell);
+
+        //场地信息
+        JSONObject itemBasicInfo = jsonObject.getJSONObject("itemBasicInfo");
+        resultJson.put("addr",itemBasicInfo.getString("venueName"));
+        resultJson.put("time",perform.getString("performName"));
+        resultJson.put("title",itemBasicInfo.getString("itemTitle"));
+        resultJson.put("coverSrc",itemBasicInfo.getString("mainImageUrl"));
+
+        //票据信息
+        JSONArray ticketArray = new JSONArray();
+        CrawlerUtils.getTIcketInfoForDMW(perform,ticketArray);
+        resultJson.put("ticket",ticketArray);
+
+        return resultJson;
     }
 }

@@ -1,7 +1,9 @@
 package com.base.project.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.base.project.entity.Performance;
 import com.base.project.entity.User;
 import com.base.project.service.PerformanceService;
 import com.base.project.service.UserService;
@@ -43,16 +45,16 @@ public class WebCrawlerController {
         JSONObject params = new JSONObject();
         params.put("cat","1");
         params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"演唱会"));
         params.put("cat","3");
         params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"话剧歌剧"));
         params.put("cat","6");
         params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"体育比赛"));
         params.put("cat","100");
         params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"儿童亲子"));
         respJson.put("contentList",jsonArray);
         return JsonBackUtil.success(respJson);
     }
@@ -140,7 +142,16 @@ public class WebCrawlerController {
         return JsonBackUtil.success(jsonObject);
     }
 
-
+    @RequestMapping("getPerformanceInfo")
+    public JSONObject getPerformanceInfo(@RequestParam String id){
+        JSONObject jsonObject = new JSONObject();
+        if(StringUtils.isBlank(id)){
+            return JsonBackUtil.fail(new JSONObject());
+        }
+        JSONObject data = performanceService.getPerformeInfo4DMW(id);
+        jsonObject.put("performInfo",performanceService.getDMWdata(data));
+        return JsonBackUtil.success(jsonObject);
+    }
 
 
 
