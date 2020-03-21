@@ -1,9 +1,7 @@
 package com.base.project.util;
 
 import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONPObject;
 import com.base.project.entity.Ticket;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
@@ -98,11 +95,23 @@ public class CrawlerUtils {
             if (responseEntity != null) {
                 System.out.println("响应内容长度为:" + responseEntity.getContentLength());
                 String result = EntityUtils.toString(responseEntity);
+
                 int begin = result.indexOf("{");
                 int end = result.lastIndexOf("}");
+                if(result.startsWith("[") && result.endsWith("]")){
+                    try{
+                        jsonObject.put("data",JSONArray.parseArray(result));
+                    }catch (Exception e){}
+
+                }
                 if (begin != -1 && end != -1) {
-                    result = result.substring(begin, end + 1);
-                    jsonObject.putAll(JSONObject.parseObject(result));
+                    try{
+                        result = result.substring(begin, end + 1);
+                        jsonObject.putAll(JSONObject.parseObject(result));
+                    }catch (JSONException e){
+
+                    }
+
                 }
 
             }
@@ -112,7 +121,7 @@ public class CrawlerUtils {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }finally {
             try {
                 // 释放资源
                 if (httpClient != null) {
@@ -124,10 +133,8 @@ public class CrawlerUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return jsonObject;
         }
-
-
-        return jsonObject;
     }
 
     static public ArrayList<Ticket> getArrForMTLData(String uri, JSONObject param) {

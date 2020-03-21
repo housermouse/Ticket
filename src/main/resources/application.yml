@@ -28,4 +28,4 @@ WebConfig:
     index: https://api-gw.damai.cn//search.html
     search: https://search.damai.cn/searchajax.html
     ticket: https://detail.damai.cn/subpage
-
+    SearchList: https://api-gw.damai.cn/suggest.html

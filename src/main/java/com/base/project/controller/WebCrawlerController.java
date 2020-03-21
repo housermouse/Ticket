@@ -27,6 +27,8 @@ public class WebCrawlerController {
 
     @Value("${WebConfig.damaiwang.search}")
     private String dmwSearch;
+    @Value("${WebConfig.damaiwang.SearchList}")
+    private String SearchList;
 
     @Autowired
     PerformanceService performanceService;
@@ -39,17 +41,17 @@ public class WebCrawlerController {
         JSONObject params = new JSONObject();
         params.put("cat","1");
         params.put("destCity","全国");
-        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
         params.put("cat","3");
         params.put("destCity","全国");
-        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
         params.put("cat","6");
         params.put("destCity","全国");
-        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
         params.put("cat","100");
         params.put("destCity","全国");
-        jsonArray.add(CrawlerUtils.getDataforUrl(dmwIndex,params).getJSONArray("data"));
-        respJson.put("initDataArr",jsonArray);
+        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params)));
+        respJson.put("contentList",jsonArray);
         return JsonBackUtil.success(respJson);
     }
 
@@ -71,4 +73,48 @@ public class WebCrawlerController {
         return JsonBackUtil.success(respJson);
     }
 
+    @RequestMapping("getSearchList")
+    public JSONObject getSearchList(@RequestParam String keyword){
+        JSONObject jsonObject = new JSONObject();
+        String keyWorld = StringUtils.isBlank(keyword)?"":keyword;
+        JSONObject params = new JSONObject();
+        params.put("keyword",keyWorld);
+        params.put("destCity","全国");
+        JSONArray temp =CrawlerUtils.getDataforUrl(SearchList,params).getJSONArray("data");
+        JSONArray result = new JSONArray();
+        for(int i = 0 ;i<temp.size();i++){
+            String tempStr = temp.getJSONObject(i).getString("name");
+            String note = tempStr.replaceAll("<(/?\\S+)\\s*?[^<]*?(/?)>","");
+             note = tempStr.replaceAll("&lt;span class=&quot;c4&quot;&gt;","");
+             note = note.replaceAll("&lt;/span&gt;","");
+            result.add(note);
+        }
+
+        jsonObject.put("list",result);
+        return JsonBackUtil.success(jsonObject);
+    }
+
+    @RequestMapping("getCarousel")
+    public JSONObject getCarousel(){
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add("https://img.alicdn.com/tps/i4/TB1euyXukP2gK0jSZPxSuucQpXa.jpg");
+        jsonArray.add("https://img.alicdn.com/tps/i4/TB1Wa0murY1gK0jSZTESutDQVXa.jpg");
+        jsonArray.add("https://gw.alicdn.com/tfs/TB1KiMMq7L0gK0jSZFtXXXQCXXa-1200-320.png");
+        jsonObject.put("imgList",jsonArray);
+        return JsonBackUtil.success(jsonObject);
+    }
+
+
+    @RequestMapping("getHotSinger")
+    public JSONObject getHotSinger(){
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add("周杰伦");
+        jsonArray.add("林俊杰");
+        jsonArray.add("蔡依林");
+        jsonArray.add("薛之谦");
+        jsonObject.put("hotSearch",jsonArray);
+        return JsonBackUtil.success(jsonObject);
+    }
 }

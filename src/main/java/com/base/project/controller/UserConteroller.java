@@ -78,6 +78,7 @@ public class UserConteroller {
         user = userService.UserRegister(user);
        if(user!=null){ //插入成功返回true 失败返回false 根据返回值跳页面
            jsonObject.put("user",user);
+           jsonObject.put("status",1);
            return JsonBackUtil.success(jsonObject);
        }else {
            return JsonBackUtil.fail(jsonObject);

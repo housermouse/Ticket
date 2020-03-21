@@ -99,6 +99,38 @@ public class PerformanceService {
         return result;
     }
 
+    public JSONObject getData(JSONObject jsonObject){
+        JSONObject objects = new JSONObject();
+        JSONObject object = new JSONObject();
+        JSONArray array = new JSONArray();
+        try {
+            JSONArray Array = jsonObject.getJSONArray("data");
+            for(int i=0;i<Array.size();i++){
+
+                JSONObject OBJ = Array.getJSONObject(i);
+                JSONObject resultTemp = new JSONObject();
+                resultTemp.put("item_img",OBJ.getString("verticalPic"));
+                resultTemp.put("item_title",OBJ.getString("name"));
+                resultTemp.put("item_venue",OBJ.getString("venueName"));
+                resultTemp.put("item_showTime",OBJ.getString("showTime"));
+                resultTemp.put("item_id",OBJ.getString("id"));
+                resultTemp.put("item_price",OBJ.getString("formattedPriceStr"));
+                if(i==0){
+                    object =  resultTemp;
+                    continue;
+                }
+                array.add(resultTemp);
+            }
+            objects.put("box_right",array);
+            objects.put("box_left",object);
+
+        }catch (Exception e
+        ){
+            return new JSONObject();
+        }
+
+        return objects;
+    }
 
     public ArrayList<Ticket> getTicketInfoForMTL(String sessionId) {
 
