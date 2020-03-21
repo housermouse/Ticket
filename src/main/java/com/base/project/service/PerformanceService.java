@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.base.project.entity.Performance;
 import com.base.project.entity.Ticket;
 import com.base.project.util.CrawlerUtils;
+import com.base.project.util.JsonBackUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -209,5 +210,23 @@ public class PerformanceService {
 
 
         return resultJson;
+    }
+
+    public JSONArray getHotSinger(){
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add("周杰伦");
+        jsonArray.add("林俊杰");
+        jsonArray.add("蔡依林");
+        jsonArray.add("薛之谦");
+        return jsonArray;
+    }
+
+
+    public JSONArray getCarousel(){
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add("https://img.alicdn.com/tps/i4/TB1euyXukP2gK0jSZPxSuucQpXa.jpg");
+        jsonArray.add("https://img.alicdn.com/tps/i4/TB1Wa0murY1gK0jSZTESutDQVXa.jpg");
+        jsonArray.add("https://gw.alicdn.com/tfs/TB1KiMMq7L0gK0jSZFtXXXQCXXa-1200-320.png");
+        return jsonArray;
     }
 }

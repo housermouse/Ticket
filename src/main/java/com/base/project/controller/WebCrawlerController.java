@@ -97,11 +97,7 @@ public class WebCrawlerController {
     @RequestMapping("getCarousel")
     public JSONObject getCarousel(){
         JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add("https://img.alicdn.com/tps/i4/TB1euyXukP2gK0jSZPxSuucQpXa.jpg");
-        jsonArray.add("https://img.alicdn.com/tps/i4/TB1Wa0murY1gK0jSZTESutDQVXa.jpg");
-        jsonArray.add("https://gw.alicdn.com/tfs/TB1KiMMq7L0gK0jSZFtXXXQCXXa-1200-320.png");
-        jsonObject.put("imgList",jsonArray);
+        jsonObject.put("imgList",performanceService.getCarousel());
         return JsonBackUtil.success(jsonObject);
     }
 
@@ -109,12 +105,7 @@ public class WebCrawlerController {
     @RequestMapping("getHotSinger")
     public JSONObject getHotSinger(){
         JSONObject jsonObject = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add("周杰伦");
-        jsonArray.add("林俊杰");
-        jsonArray.add("蔡依林");
-        jsonArray.add("薛之谦");
-        jsonObject.put("hotSearch",jsonArray);
+        jsonObject.put("hotSearch",performanceService.getHotSinger());
         return JsonBackUtil.success(jsonObject);
     }
 }
