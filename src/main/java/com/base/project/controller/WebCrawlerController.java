@@ -64,7 +64,7 @@ public class WebCrawlerController {
     public JSONObject search(@RequestParam String keyword){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-        params.put("keyword",keyword);
+        params.put("keyword",keyword.replaceAll(" ",""));
         JSONArray searchData = new JSONArray();
         if(StringUtils.isBlank(keyword)){
             searchData.add(performanceService.getJSONData(new JSONArray(),"大麦网","DMW"));
@@ -82,7 +82,7 @@ public class WebCrawlerController {
     public JSONObject getSearch(@RequestParam String keyword){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-        params.put("keyword",keyword);
+        params.put("keyword",keyword.replaceAll(" ",""));
         JSONArray searchData = new JSONArray();
         JSONArray dmwJsonArr = performanceService.getArrForDmw(CrawlerUtils.getDataforUrl(dmwSearch, params));
         for (Object e:dmwJsonArr){
@@ -109,7 +109,7 @@ public class WebCrawlerController {
         JSONObject jsonObject = new JSONObject();
         String keyWorld = StringUtils.isBlank(keyword)?"":keyword;
         JSONObject params = new JSONObject();
-        params.put("keyword",keyWorld);
+        params.put("keyword",keyword.replaceAll(" ",""));
         params.put("destCity","全国");
         JSONArray temp =CrawlerUtils.getDataforUrl(SearchList,params).getJSONArray("data");
         JSONArray result = new JSONArray();
@@ -146,7 +146,7 @@ public class WebCrawlerController {
         JSONObject jsonObject = new JSONObject();
         String keyWorld = StringUtils.isBlank(keyword)?"":keyword;
         JSONObject params = new JSONObject();
-        params.put("keyword",keyWorld);
+        params.put("keyword",keyword.replaceAll(" ",""));
         String  ids = CrawlerUtils.getDataforUrl(dmwSearch,params).getString("ids");
         params.put("projects",ids);
         JSONObject getData= CrawlerUtils.getDataforUrl(SearchLikeList,params);

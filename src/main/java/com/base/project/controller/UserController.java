@@ -41,6 +41,7 @@ public class UserController {
         Response.put("user",result);
         if(result!=null){
           SessionUtils.setUser(request,user);
+          Response.put("status","1");
           return JsonBackUtil.success(Response);
         }
         else {
