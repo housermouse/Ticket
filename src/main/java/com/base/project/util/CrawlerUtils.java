@@ -176,11 +176,12 @@ public class CrawlerUtils {
     public static JSONArray getTIcketInfoForDMW(JSONObject perform,JSONArray jsonArray){
 
         JSONArray tickArr = perform.getJSONArray("skuList");
-        JSONObject ticketInfo = new JSONObject();
+
         for (Object o : tickArr) {
             JSONObject obj = (JSONObject) o;
             JSONObject ticket = new JSONObject();
             JSONArray tempArray = new JSONArray();
+            JSONObject ticketInfo = new JSONObject();
             ticket.put("isNoTicket","0".equals(obj.getString("salableQuantity")));
             ticket.put("originPrice",obj.getString("dashPrice"));
             ticket.put("originName","大麦网");
