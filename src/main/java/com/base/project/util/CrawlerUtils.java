@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.base.project.entity.Ticket;
+import com.base.project.service.PerformanceService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -22,8 +24,14 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class CrawlerUtils {
+
+
+
+
     public static String paramToString(JSONObject parms) {
         StringBuilder sb = new StringBuilder();
         Iterator iter = parms.entrySet().iterator();
@@ -193,6 +201,35 @@ public class CrawlerUtils {
         }
 
         return jsonArray;
+    }
+
+    public static JSONArray getSearch(String keyword,String order){
+        PerformanceService performanceService = new PerformanceService();
+        JSONObject respJson = new JSONObject();
+        JSONObject params = new JSONObject();
+        params.put("keyword",keyword.replaceAll(" ",""));
+        if(StringUtils.isBlank(order)){
+            order = "";
+        }
+        params.put("order",order);
+        JSONArray searchData = new JSONArray();
+        JSONArray dmwJsonArr = performanceService.getArrForDmw(CrawlerUtils.getDataforUrl("https://search.damai.cn/searchajax.html", params));
+        for (Object e:dmwJsonArr){
+            JSONObject obj = (JSONObject)e;
+            JSONObject result = new JSONObject();
+            result.put("tag",obj.getString("categoryname"));
+            result.put("img",obj.getString("verticalPic"));
+            result.put("title",obj.getString("nameNoHtml"));
+            result.put("singer",obj.getString("actors").replaceAll("<(/?\\S+)\\s*?[^<]*?(/?)>",""));
+            result.put("addr",obj.getString("venue"));
+            result.put("time",obj.getString("showtime"));
+            result.put("price",obj.getString("price"));
+            result.put("sell",obj.getString("showstatus"));
+            result.put("id",obj.getString("projectid"));
+            searchData.add(result);
+
+        }
+        return searchData;
     }
 
 

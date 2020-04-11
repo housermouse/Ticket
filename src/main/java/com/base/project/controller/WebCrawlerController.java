@@ -82,25 +82,14 @@ public class WebCrawlerController {
     public JSONObject getSearch(@RequestParam String keyword){
         JSONObject respJson = new JSONObject();
         JSONObject params = new JSONObject();
-        params.put("keyword",keyword.replaceAll(" ",""));
-        JSONArray searchData = new JSONArray();
-        JSONArray dmwJsonArr = performanceService.getArrForDmw(CrawlerUtils.getDataforUrl(dmwSearch, params));
-        for (Object e:dmwJsonArr){
-            JSONObject obj = (JSONObject)e;
-            JSONObject result = new JSONObject();
-            result.put("tag",obj.getString("categoryname"));
-            result.put("img",obj.getString("verticalPic"));
-            result.put("title",obj.getString("nameNoHtml"));
-            result.put("singer",obj.getString("actors").replaceAll("<(/?\\S+)\\s*?[^<]*?(/?)>",""));
-            result.put("addr",obj.getString("venue"));
-            result.put("time",obj.getString("showtime"));
-            result.put("price",obj.getString("price"));
-            result.put("sell",obj.getString("showstatus"));
-            result.put("id",obj.getString("projectid"));
-            searchData.add(result);
-
+        if(StringUtils.isBlank(keyword)){
+            keyword = "";
         }
-        respJson.put("newsList",searchData);
+        params.put("keyword",keyword.replaceAll(" ",""));
+        respJson.put("related",CrawlerUtils.getSearch(keyword,"0"));
+        respJson.put("recommend",CrawlerUtils.getSearch(keyword,"0"));
+        respJson.put("recent",CrawlerUtils.getSearch(keyword,"0"));
+        respJson.put("newsList",CrawlerUtils.getSearch(keyword,"0"));
         return JsonBackUtil.success(respJson);
     }
 
