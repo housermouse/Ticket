@@ -50,12 +50,8 @@ public class WebCrawlerController {
         params.put("cat","3");
         params.put("destCity","全国");
         jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"话剧歌剧"));
-        params.put("cat","6");
-        params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"体育比赛"));
-        params.put("cat","100");
-        params.put("destCity","全国");
-        jsonArray.add(performanceService.getData(CrawlerUtils.getDataforUrl(dmwIndex,params),"儿童亲子"));
+        jsonArray.add(performanceService.getindexForMTL("展览休闲"));
+        jsonArray.add(performanceService.getindexForMTL("音乐会"));
         respJson.put("contentList",jsonArray);
         return JsonBackUtil.success(respJson);
     }
@@ -87,9 +83,9 @@ public class WebCrawlerController {
         }
         params.put("keyword",keyword.replaceAll(" ",""));
         respJson.put("related",CrawlerUtils.getSearch(keyword,"0"));
-        respJson.put("recommend",CrawlerUtils.getSearch(keyword,"0"));
-        respJson.put("recent",CrawlerUtils.getSearch(keyword,"0"));
-        respJson.put("newsList",CrawlerUtils.getSearch(keyword,"0"));
+        respJson.put("recommend",CrawlerUtils.getSearch(keyword,"1"));
+        respJson.put("recent",CrawlerUtils.getSearch(keyword,"2"));
+        respJson.put("newsList",CrawlerUtils.getSearch(keyword,"3"));
         return JsonBackUtil.success(respJson);
     }
 
@@ -159,15 +155,29 @@ public class WebCrawlerController {
     }
 
     @RequestMapping("getPerformanceInfo")
-    public JSONObject getPerformanceInfo(@RequestParam String id){
+    public JSONObject getPerformanceInfo(HttpServletRequest request, HttpServletResponse response){
         JSONObject jsonObject = new JSONObject();
-        if(StringUtils.isBlank(id)){
-            return JsonBackUtil.fail(new JSONObject());
+        String id =  request.getParameter("id");;
+        String type =  request.getParameter("type");;
+        if(StringUtils.isBlank(id)|| StringUtils.isBlank(type)){
+            jsonObject.put("reamrk","参数传入不正确");
+            return JsonBackUtil.fail(jsonObject);
         }
-        JSONObject data = performanceService.getPerformeInfo4DMW(id);
-        jsonObject.put("performInfo",performanceService.getDMWdata(data));
+        if("0".equals(type)){
+            JSONObject data = performanceService.getPerformeInfo4DMW(id);
+            jsonObject.put("performInfo",performanceService.getDMWdata(data,id));
+        }else if(type.equals("1")){
+            String coverSrc =  request.getParameter("coverSrc");;
+            String addr =  request.getParameter("addr");;
+            JSONObject data = CrawlerUtils.getperforMTL(id);
+            data.put("addr",addr);
+            data.put("coverSrc",coverSrc);
+            jsonObject.put("performInfo",data);
+        }
+
         return JsonBackUtil.success(jsonObject);
     }
+
 
 
 

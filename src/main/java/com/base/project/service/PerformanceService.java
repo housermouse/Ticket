@@ -90,6 +90,7 @@ public class PerformanceService {
             jsonObject.put("dmChannel", "pc@damai_pc");
             jsonObject.put("bizCode", "ali.china.damai");
             jsonObject.put("scenario", "itemsku");
+
             JSONObject data = CrawlerUtils.getDataforUrl("https://detail.damai.cn/subpage", jsonObject);
             return data;
         } catch (Exception e) {
@@ -140,6 +141,7 @@ public class PerformanceService {
                 resultTemp.put("item_showTime",OBJ.getString("showTime"));
                 resultTemp.put("item_id",OBJ.getString("id"));
                 resultTemp.put("item_price",OBJ.getString("formattedPriceStr"));
+                resultTemp.put("type","0");// 0 是大麦网 1是摩天轮
                 if(i==0){
 
                     object =  resultTemp;
@@ -255,7 +257,7 @@ public class PerformanceService {
         return jsonArray;
     }
 
-    public JSONObject getDMWdata(JSONObject jsonObject){
+    public JSONObject getDMWdata(JSONObject jsonObject,String id){
         JSONObject resultJson = new JSONObject();
         JSONObject perform = jsonObject.getJSONObject("perform");
         JSONObject presell = new JSONObject();
@@ -275,7 +277,57 @@ public class PerformanceService {
         JSONArray ticketArray = new JSONArray();
         CrawlerUtils.getTIcketInfoForDMW(perform,ticketArray);
         resultJson.put("ticket",ticketArray);
+        resultJson.put("gotoURL","https://detail.damai.cn/item.htm?id="+id);
 
         return resultJson;
     }
+
+
+    public JSONObject getindexForMTL(String title) {
+        String uri = "https://www.moretickets.com/";
+        JSONObject result = new JSONObject();
+        try {
+            Document doc = Jsoup.connect(uri).get();
+            Elements elements = doc.getElementsByClass("page-section-row");
+            for (Element element : elements) {
+                //此时获取到演唱会对象
+                if(title.equals(element.getElementsByClass("section-name").text())){
+                    //封装完左边大图数据
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("item_img", element.getElementsByClass("image-holder").get(0).getElementsByTag("img").attr("data-src"));
+                    jsonObject.put("item_title", element.getElementsByClass("first-show-name").get(0).text());
+                    jsonObject.put("item_id", element.getElementsByClass("first-show small sa-type-click").get(0).attr("data-sashowoid"));
+                    jsonObject.put("type","1");// 0 是大麦网 1是摩天轮
+                    result.put("box_left",jsonObject);
+                    result.put("title","摩天轮"+title);
+
+                    //获取到右边数据
+                    Elements restShow = element.getElementsByClass("type-show sa-type-click");
+                    JSONArray rightArray = new JSONArray();
+                    for (Element element1 : restShow) {
+                        JSONObject temp = new JSONObject();
+                        temp.put("item_img",element1.getElementsByClass("image-holder").get(0).getElementsByTag("img").attr("data-src"));
+                        temp.put("item_title",element1.getElementsByClass("type-show-name").text());
+                        temp.put("item_showTime",element1.getElementsByClass("type-show-info").text());
+                        temp.put("item_venue",element1.getElementsByClass("type-show-info").text());
+                        temp.put("item_price",element1.getElementsByClass("type-show-price").text());
+                        temp.put("item_id",element1.attr("data-sashowoid"));
+                        temp.put("type","1");// 0 是大麦网 1是摩天轮
+                        rightArray.add(temp);
+                    }
+                    result.put("box_right",rightArray);
+
+                }
+
+            }
+
+        } catch (Exception e) {
+            return new JSONObject();
+        }
+        return result;
+    }
+
+
+
+
 }

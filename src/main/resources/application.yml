@@ -30,3 +30,5 @@ WebConfig:
     ticket: https://detail.damai.cn/subpage
     SearchList: https://api-gw.damai.cn/suggest.html
     SearchLikeList: https://search.damai.cn/external/gl.html
+  motianlun:
+    index: https://www.moretickets.com/

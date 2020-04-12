@@ -232,5 +232,103 @@ public class CrawlerUtils {
         return searchData;
     }
 
+    public static JSONObject getperforMTL(String sessionId) {
+
+        JSONObject jsonObject = new JSONObject();
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+       JSONObject resultJson = new JSONObject();
+        String uri = "https://www.moretickets.com/showapi/pub/v1_2/show/" + sessionId + "/sessionone";
+        // 创建Get请求
+        HttpGet httpGet = new HttpGet(uri);
+        // 响应模型
+        CloseableHttpResponse response = null;
+        try {
+            // 配置信息
+            RequestConfig requestConfig = RequestConfig.custom()
+                    // 设置连接超时时间(单位毫秒)
+                    .setConnectTimeout(5000)
+                    // 设置请求超时时间(单位毫秒)
+                    .setConnectionRequestTimeout(5000)
+                    // socket读写超时时间(单位毫秒)
+                    .setSocketTimeout(5000)
+                    // 设置是否允许重定向(默认为true)
+                    .setRedirectsEnabled(true).build();
+
+            // 将上面的配置信息 运用到这个Get请求里
+            httpGet.setConfig(requestConfig);
+
+            // 由客户端执行(发送)Get请求
+            response = httpClient.execute(httpGet);
+
+            // 从响应模型中获取响应实体
+            HttpEntity responseEntity = response.getEntity();
+
+            System.out.println("响应状态为:" + response.getStatusLine());
+            if (responseEntity != null) {
+                System.out.println("响应内容长度为:" + responseEntity.getContentLength());
+                String result = EntityUtils.toString(responseEntity);
+                int begin = result.indexOf("{");
+                int end = result.lastIndexOf("}");
+                if (begin != -1 && end != -1) {
+                    result = result.substring(begin, end + 1);
+                    jsonObject.putAll(JSONObject.parseObject(result));
+                    JSONObject resultData = jsonObject.getJSONObject("result");
+                    JSONArray data = resultData.getJSONArray("data");
+                    for (Object o : data) {
+                        JSONObject obj = (JSONObject) o;
+                        JSONObject temp = new JSONObject();
+                        temp.put("time",obj.getString("showTime"));
+                        temp.put("title",obj.getJSONObject("showStatus").getString("displayName"));
+                        resultJson.put("presell","temp");
+                        resultJson.put("time",obj.getString("showTime"));
+                        resultJson.put("title",obj.getString("showTime"));
+                        resultJson.put("gotoURL","https://www.moretickets.com/content/"+sessionId);
+                        JSONArray tickets = new JSONArray();
+                        for(Object item :obj.getJSONArray("seatplans")){
+                            JSONObject ticket = new JSONObject();
+                            JSONObject object = new JSONObject();
+                            ticket.put("originPic","https://www.moretickets.com/images/logo-b17998409b.png");
+                            ticket.put("originName","摩天轮");
+                            ticket.put("originPrice",((JSONObject) item).getString("minPrice"));
+                            ticket.put("isNoTicket",((JSONObject) item).getString("limitation"));
+                            JSONArray objects = new JSONArray();
+                            objects.add(ticket);
+                            object.put("origin",objects);
+                            object.put("priceLevel",ticket.getString("originPrice"));
+                            tickets.add(object);
+                        }
+                        resultJson.put("ticket",tickets);
+                        break;
+                    }
+                }
+
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                // 释放资源
+                if (httpClient != null) {
+                    httpClient.close();
+                }
+                if (response != null) {
+                    response.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return resultJson;
+    }
+
 
 }
