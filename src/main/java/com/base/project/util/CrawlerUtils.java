@@ -290,11 +290,11 @@ public class CrawlerUtils {
                             ticket.put("originPic","https://www.moretickets.com/images/logo-b17998409b.png");
                             ticket.put("originName","摩天轮");
                             ticket.put("originPrice",((JSONObject) item).getString("minPrice"));
-                            ticket.put("isNoTicket",((JSONObject) item).getString("limitation"));
+                            ticket.put("isNoTicket","0".equals(((JSONObject) item).getString("salePrice")));
                             JSONArray objects = new JSONArray();
                             objects.add(ticket);
                             object.put("origin",objects);
-                            object.put("priceLevel",ticket.getString("originPrice"));
+                            object.put("priceLevel",((JSONObject) item).getString("originalPrice"));
                             tickets.add(object);
                         }
                         resultJson.put("ticket",tickets);
