@@ -226,6 +226,7 @@ public class CrawlerUtils {
             result.put("price",obj.getString("price"));
             result.put("sell",obj.getString("showstatus"));
             result.put("id",obj.getString("projectid"));
+            result.put("type","0");
             searchData.add(result);
 
         }
