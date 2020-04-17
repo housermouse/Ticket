@@ -22,11 +22,11 @@ public class UserService {
     //插入成功返回true 失败返回false
     public User UserRegister(User user) {
         User result = null;
+        User temp = new User();
+        temp.setUserName(user.getUserName());
         try{
-            User loginUser = userDao.checkUserLogin(user);
-            if(loginUser!= null){
-                result = loginUser;
-            }else {
+            User loginUser = userDao.checkUserLogin(temp);
+            if(loginUser== null){
                 userDao.insert(user);
                 result = user;
             }
