@@ -11,5 +11,7 @@ import org.springframework.stereotype.Component;
 @Mapper
 @Component
 public interface  UserMapper extends BaseMapper<User> {
+    @Select("SELECT *FROM t_user where username where user_name=#{username}")
+    public User checkUserLogin(String username);
 
 }

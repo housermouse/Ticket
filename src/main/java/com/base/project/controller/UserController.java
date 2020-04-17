@@ -82,6 +82,7 @@ public class UserController {
            jsonObject.put("status",1);
            return JsonBackUtil.success(jsonObject);
        }else {
+           jsonObject.put("reamrk","用户名已被注册");
            return JsonBackUtil.fail(jsonObject);
        }
     }

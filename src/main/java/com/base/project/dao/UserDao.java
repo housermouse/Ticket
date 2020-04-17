@@ -15,7 +15,7 @@ public class UserDao {
     private UserMapper userMapper;
 
     public User checkUserLogin(User usre) {
-        return userMapper.selectOne(usre);
+        return userMapper.checkUserLogin(usre.getUserName());
     }
 
     //插入成功返回true 失败返回false
